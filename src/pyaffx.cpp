@@ -3,14 +3,14 @@
 #include <pybind11/stl.h>
 #include <pybind11/eigen.h>
 
-#include <affx/affine.hpp>
+#include <affx/affx.hpp>
 
 namespace py = pybind11;
 using namespace pybind11::literals; // to bring in the '_a' literal
-using namespace affx;
+using namespace Affx;
 
 
-PYBIND11_MODULE(pyaffx, m) {
+PYBIND11_MODULE(affx, m) {  // affx 必须和
   m.doc() = "3D Affine transformations for C++ and Python.";
 
   py::class_<Affine>(m, "Affine")

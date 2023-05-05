@@ -8,7 +8,7 @@
 #define M_PI		3.14159265358979323846
 
 
-namespace affx {
+namespace Affx {
 
 class Affine {
   using Vector6d = Eigen::Matrix<double, 6, 1>;
