@@ -5,6 +5,7 @@
 
 #include <Eigen/Geometry>
 #include <unsupported/Eigen/EulerAngles>
+#define M_PI		3.14159265358979323846
 
 
 namespace affx {
@@ -39,11 +40,11 @@ public:
 
   explicit Affine(const std::array<double, 6>& v): Affine(v[0], v[1], v[2], v[3], v[4], v[5]) { }
 
-  explicit Affine(const std::array<double, 7>& v): Affine(v[0], v[1], v[2], v[3], v[4], v[5]) { }
+  explicit Affine(const std::array<double, 7>& v): Affine(v[0], v[1], v[2], v[3], v[4], v[5], v[6]) { }
 
   explicit Affine(const Vector6d& v): Affine(v[0], v[1], v[2], v[3], v[4], v[5]) { }
 
-  explicit Affine(const Vector7d& v): Affine(v[0], v[1], v[2], v[3], v[4], v[5]) { }
+  explicit Affine(const Vector7d& v): Affine(v[0], v[1], v[2], v[3], v[4], v[5], v[6]) { }
 
   explicit Affine(const std::array<double, 16>& array) {
     Type affine(Eigen::Matrix4d::Map(array.data()));
