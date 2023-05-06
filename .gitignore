@@ -5,3 +5,5 @@ Release
 __pycache__/
 *.egg-info/
 dist/
+*.pyi
+*.pyd

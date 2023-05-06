@@ -6,7 +6,8 @@
 #include <Eigen/Geometry>
 #include <unsupported/Eigen/EulerAngles>
 #define M_PI		3.14159265358979323846
-
+#define deg2rad(deg)  ((deg)/180*M_PI)
+#define rad2deg(rad)  ((rad)/M_PI*180)
 
 namespace Affx {
 
@@ -28,9 +29,10 @@ public:
     this->data = data;
   }
 
+    // a, b, c, unit degree
   explicit Affine(double x, double y, double z, double a = 0.0, double b = 0.0, double c = 0.0) {
     data.translation() = Eigen::Vector3d(x, y, z);
-    data.linear() = Euler(a, b, c).toRotationMatrix();
+    data.linear() = Euler(deg2rad(a), deg2rad(b), deg2rad(c)).toRotationMatrix();
   }
 
   explicit Affine(double x, double y, double z, double q_w, double q_x, double q_y, double q_z) {
@@ -81,6 +83,20 @@ public:
     return result;
   }
 
+  Vector7d pose() const {
+    Vector7d result;
+    auto q = quaternion();
+    result << data.translation(), q.w(), q.x(), q.y(), q.z();
+    return result;
+  }
+
+  Vector7d to_numpy() const {
+    Vector7d result;
+    auto q = quaternion();
+    result << data.translation(), q.w(), q.x(), q.y(), q.z();
+    return result;
+  }
+
   Vector7d vector_with_elbow(double elbow) const {
     Vector7d result;
     result << data.translation(), angles(), elbow;
@@ -93,6 +109,7 @@ public:
     return v;
   }
 
+    // angles unit degree
   Eigen::Vector3d angles() const {
     Eigen::Vector3d angles = Euler(data.rotation()).angles();
     Eigen::Vector3d angles_equal;
@@ -106,9 +123,9 @@ public:
     }
 
     if (angles.norm() < angles_equal.norm()) {
-      return angles;
+      return rad2deg(angles);
     }
-    return angles_equal;
+    return rad2deg(angles_equal);
   }
 
   Type::LinearMatrixType rotation() const {
@@ -201,17 +218,17 @@ public:
 
   void setA(double a) {
     Eigen::Vector3d euler = angles();
-    data.linear() = Euler(a, euler(1), euler(2)).toRotationMatrix();
+    data.linear() = Euler(deg2rad(a), euler(1), euler(2)).toRotationMatrix();
   }
 
   void setB(double b) {
     Eigen::Vector3d euler = angles();
-    data.linear() = Euler(euler(0), b, euler(2)).toRotationMatrix();
+    data.linear() = Euler(euler(0), deg2rad(b), euler(2)).toRotationMatrix();
   }
 
   void setC(double c) {
     Eigen::Vector3d euler = angles();
-    data.linear() = Euler(euler(0), euler(1), c).toRotationMatrix();
+    data.linear() = Euler(euler(0), euler(1), deg2rad(c)).toRotationMatrix();
   }
 
   Affine slerp(const Affine& affine, double t) const {

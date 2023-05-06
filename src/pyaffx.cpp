@@ -17,6 +17,10 @@ PYBIND11_MODULE(affx, m) {  // affx 必须和
     .def(py::init<double, double, double, double, double, double>(), "x"_a=0, "y"_a=0, "z"_a=0, "a"_a=0, "b"_a=0, "c"_a=0)
     .def(py::init<double, double, double, double, double, double, double>(), "x"_a=0, "y"_a=0, "z"_a=0, "q_w"_a=1, "q_x"_a=0, "q_y"_a=0, "q_z"_a=0)
     .def(py::init<const std::array<double, 16>&>())
+    .def(py::init<const std::array<double, 6>&>())
+    .def(py::init<const std::array<double, 7>&>())
+    .def(py::init<const Eigen::Matrix<double, 6, 1>&>())
+    .def(py::init<const Eigen::Matrix<double, 7, 1>&>())
     .def(py::init([](py::dict d) {
       if (d.contains("q_x")) { // Prefer quaternion construction
         return Affine(d["x"].cast<double>(), d["y"].cast<double>(), d["z"].cast<double>(), d["q_w"].cast<double>(), d["q_x"].cast<double>(), d["q_y"].cast<double>(), d["q_z"].cast<double>());
@@ -31,6 +35,8 @@ PYBIND11_MODULE(affx, m) {  // affx 必须和
     .def("translation", &Affine::translation)
     .def("matrix", &Affine::matrix)
     .def("vector", &Affine::vector)
+    .def("pose", &Affine::pose)
+    .def("to_numpy", &Affine::to_numpy)
     .def("array", &Affine::array)
     .def("angles", &Affine::angles)
     .def("rotate", &Affine::rotate)
