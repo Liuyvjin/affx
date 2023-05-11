@@ -72,7 +72,7 @@ setup(
     license='LGPL',
     ext_modules=[CMakeExtension('affx')],
     packages=["pyaffx"],  # 需要安装的包
-    package_data={ "pyaffx": ["*.pyd", "*.pyi"], },  # 保证 .pyd .pyi 文件被安装
+    package_data={ "pyaffx": ["*.pyd", "*.pyi", "*.so"], },  # 保证 .pyd .pyi 文件被安装
     cmdclass=dict(build_ext=CMakeBuild),
     keywords=['robot', 'robotics', 'trajectory-generation', 'motion-control'],
     python_requires='>=3.6',
