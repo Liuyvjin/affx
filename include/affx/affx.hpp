@@ -1,11 +1,13 @@
 #pragma once
 
+#include <iostream>
+#include <cmath>
 #include <array>
 #include <random>
-
 #include <Eigen/Geometry>
 #include <unsupported/Eigen/EulerAngles>
 #define M_PI		3.14159265358979323846
+#define M_PI_2		1.57079632679489661923
 #define deg2rad(deg)  ((deg)/180*M_PI)
 #define rad2deg(rad)  ((rad)/M_PI*180)
 
@@ -109,8 +111,8 @@ public:
     return v;
   }
 
-    // angles unit degree
-  Eigen::Vector3d angles() const {
+  // angles unit rad
+  Eigen::Vector3d angles_rad() const {
     Eigen::Vector3d angles = Euler(data.rotation()).angles();
     Eigen::Vector3d angles_equal;
     angles_equal << angles[0] - M_PI, M_PI - angles[1], angles[2] - M_PI;
@@ -123,9 +125,15 @@ public:
     }
 
     if (angles.norm() < angles_equal.norm()) {
-      return rad2deg(angles);
+      return angles;
     }
-    return rad2deg(angles_equal);
+    return angles_equal;
+  }
+
+  // angles unit deg
+  Eigen::Vector3d angles() const {
+    Eigen::Vector3d euler = angles_rad();
+    return rad2deg(euler);
   }
 
   Type::LinearMatrixType rotation() const {
@@ -217,17 +225,17 @@ public:
   }
 
   void setA(double a) {
-    Eigen::Vector3d euler = angles();
+    Eigen::Vector3d euler = angles_rad();
     data.linear() = Euler(deg2rad(a), euler(1), euler(2)).toRotationMatrix();
   }
 
   void setB(double b) {
-    Eigen::Vector3d euler = angles();
+    Eigen::Vector3d euler = angles_rad();
     data.linear() = Euler(euler(0), deg2rad(b), euler(2)).toRotationMatrix();
   }
 
   void setC(double c) {
-    Eigen::Vector3d euler = angles();
+    Eigen::Vector3d euler = angles_rad();
     data.linear() = Euler(euler(0), euler(1), deg2rad(c)).toRotationMatrix();
   }
 
@@ -261,6 +269,33 @@ public:
 
     return "[" + std::to_string(v(0)) + ", " + std::to_string(v(1)) + ", " + std::to_string(v(2))
       + ", " + std::to_string(v(3)) + ", " + std::to_string(v(4)) + ", " + std::to_string(v(5)) + "]";
+  }
+
+  static Type::LinearMatrixType eulerToRotation(double a, double b, double c) {
+    Type::LinearMatrixType result;
+    result = Euler(deg2rad(a), deg2rad(b), deg2rad(c)).toRotationMatrix();
+    return result;
+  }
+
+  void setEuler(double a, double b, double c) {
+    data.linear() = Euler(deg2rad(a), deg2rad(b), deg2rad(c)).toRotationMatrix();
+  }
+
+  void setXYZ(double x, double y, double z) {
+    data.translation().x() = x;
+    data.translation().y() = y;
+    data.translation().z() = z;
+  }
+
+  Affine align() const {
+    Type result = data;
+    Eigen::Vector3d euler = angles_rad();
+
+    for(int i=0; i<3; ++i){
+        euler[i] = round(euler[i] / M_PI_2) * M_PI_2;
+    }
+    result.linear() = Euler(euler[0], euler[1], euler[2]).toRotationMatrix();
+    return Affine(result);
   }
 };
 

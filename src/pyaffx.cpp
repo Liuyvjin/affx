@@ -39,6 +39,7 @@ PYBIND11_MODULE(affx, m) {  // affx 必须和
     .def("to_numpy", &Affine::to_numpy)
     .def("array", &Affine::array)
     .def("angles", &Affine::angles)
+    .def("angles_rad", &Affine::angles_rad)
     .def("rotate", &Affine::rotate)
     .def("prerotate", &Affine::prerotate)
     .def("rotation", &Affine::rotation)
@@ -72,5 +73,10 @@ PYBIND11_MODULE(affx, m) {  // affx 必须和
       d["q_y"] = quaternion.y();
       d["q_z"] = quaternion.z();
       return d;
-    });
+    })
+    .def_static("euler_to_rotation", &Affine::eulerToRotation)
+    .def("set_euler", &Affine::setEuler)
+    .def("set_xyz", &Affine::setXYZ)
+    .def("align", &Affine::align)
+    ;
 }
